@@ -1,17 +1,34 @@
-# rerank_model_finetune
+# rerank_model
 finetune rerank model like bce_reranker_bce、bge_reranker_base、bge_reranker_large
 ## Installation
 Operating System: Linux
 ```bash
 conda create -n rerank_model_finetune python=3.10
 conda activate rerank_model_finetune
-git clone https://github.com/Hzzz123rfefd/rerank_model_finetune.git
+git clone https://github.com/Hzzz123rfefd/rerank_model.git
 cd rerank_model_finetune
 pip install -r requirements.txt
 ```
 ## Usage
-### fintune
-1、prepare finetune data,using jsonl format
+### Dataset
+Firstly, you can download the ms_marco dataset with the following script:
+```bash
+python datasets/ms_marco/download_data.py
+```
+your directory structure should be:
+- rerank_model/
+  - datasets/
+    - ms_marco/
+      - ms_marco_test.csv
+      - ms_marco_train.csv
+      - ms_marco_validation.csv
+
+Then, you can process jobstreet data with following script:
+```bash
+python datasets/ms_marco/process_data.py
+```
+
+No matter what dataset you use, please convert it to the required dataset format for this project, as follows:
 "pos" refer to the kownledge relate to query
 "neg" refer to the kownledge unrelate to query
 ```jsonl
@@ -19,35 +36,22 @@ pip install -r requirements.txt
 {"query": " ", "pos": [" ",...," "], "neg": [" ",..., " "]}
 {"query": " ", "pos": [" ",...," "], "neg": [" ",..., " "]}
 ```
-* sh
+
+### rerank Model
+If you don't have the rerank model on your computer, you can download the model through the following script
 ```bash
-python train.py --model_name_or_path {base reranker model path or name} \
-                         --finetune_model_dir {finetune model dir} \
-                         --data_path {finetune data path} \
-                         --train_group_size {a query corresponds to one positive example and train_group_size-1  negative examples} \
-                         --max_len {query + konwdge max tokens}\
-                         --batch_size 2 \
-                         --total_epoch 1000 \
-                         --lr {learnning rate} \
-                         --factor {learnning rate attenuation coefficient} \
-                         --patience {learnning rate attenuation threshold} \
-                         --device cuda
+python download_model.py
 ```
-* example
+
+### Trainning
+An examplary training script with a Cross Entropy loss is provided in `train.py`.
+You can adjust the model parameters in `config/rerank.yml`
 ```bash
-python train.py --model_name_or_path BAAI/bge-reranker-base \
-                         --finetune_model_dir ./saved_model/test \
-                         --data_path data/0medical.jsonl \
-                         --train_group_size 8 \
-                         --max_len 512\
-                         --batch_size 2 \
-                         --total_epoch 1000 \
-                         --lr 1e-5 \
-                         --factor 0.3 \
-                         --patience 8 \
-                         --device cuda
+python train.py --model_config_path config/rerank.yml
 ```
-### rerank
+
+
+### inference
 1、prepare rerank data,using json format
 ```json
 {"query":"query","kowndges":["kowndge1","kowndge2".....]}
@@ -67,3 +71,5 @@ python example/rerank.py --model_dir BAAI/bge-reranker-base \
                                            --device cuda
 ```
 
+## Related links
+ * ms_marco Dataset: https://huggingface.co/datasets/microsoft/ms_marco?row=0

@@ -3,3 +3,6 @@ data/*
 saved_model/*
 *.pyc
 *.json
+*.csv
+.DS_Store
+marco_train
