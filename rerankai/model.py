@@ -1,4 +1,5 @@
 import math
+from typing import List
 import torch.nn as nn
 import torch
 from tqdm import tqdm
@@ -222,8 +223,10 @@ class ModelRerank(nn.Module):
         log_message, accuracy, precision, recall, f1 = calculate_metrics(predict_class, true_class)
         log_message = "Eval Epoch: {:d}\n".format(epoch) + log_message
         print(log_message)
-        with open(log_path, "a") as file:
-            file.write(log_message+"\n")
+        if log_path != None:
+            with open(log_path, "a") as file:
+                file.write(log_message+"\n")
+        return log_message, accuracy, precision, recall, f1
                 
     def compute_loss(self, input:dict):
         output = {}
@@ -246,3 +249,27 @@ class ModelRerank(nn.Module):
     def save_pretrained(self,  save_model_dir):
         self.model.save_pretrained(save_model_dir) 
         self.tokenizer.save_pretrained(save_model_dir)
+
+    def rerank(self, query:str, docs:List[str]):
+        self.eval()
+        lenth = len(docs)
+        querys = [query for i in range(lenth)]
+        output = self.tokenizer(
+            querys,
+            docs,
+            truncation = True,
+            max_length = 512,
+            padding = True,
+            return_tensors = "pt"
+        )
+        self.to(self.device)
+        output.to(self.device)
+        scores_collection = []
+        with torch.no_grad():
+            scores = self.model(**output, return_dict=True).logits.view(-1,).float()
+            scores = torch.sigmoid(scores)
+            scores_collection.extend(scores.cpu().numpy().tolist())
+        for i in range(lenth):
+            print(query + " and " + docs[i], ",   relevance:", scores_collection[i])
+        return scores_collection
+        

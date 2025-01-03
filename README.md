@@ -50,25 +50,16 @@ You can adjust the model parameters in `config/rerank.yml`
 python train.py --model_config_path config/rerank.yml
 ```
 
+### Eval
+After training your model, you can use a script to evaluate it using metrics such as accuracy, precision, recall, and F1 score
+```bash
+python example/eval.py --model_config_path config/rerank.yml
+```
 
-### inference
-1、prepare rerank data,using json format
-```json
-{"query":"query","kowndges":["kowndge1","kowndge2".....]}
-```
-* sh
+### Inference
+You can use the following script to perform inference rerank, and you can modify your data in `example/rerank.py`
 ```bash
-python example/rerank.py --model_dir {model dir} \
-                                           --data_path {rerank data path} \
-                                           --max_length {max padding length} \
-                                           --device cuda
-```
-* example
-```bash
-python example/rerank.py --model_dir BAAI/bge-reranker-base \
-                                           --data_path data/1.json \
-                                           --max_length 512 \
-                                           --device cuda
+python example/rerank.py --model_config_path config/rerank.yml
 ```
 
 ## Related links
