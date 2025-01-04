@@ -35,7 +35,8 @@ def process_csv(input_file, output_file):
 
 
 def main(args):
-    shutil.rmtree(args.out_dir)
+    if os.path.isdir(args.out_dir):
+        shutil.rmtree(args.out_dir)
     os.makedirs(args.out_dir,exist_ok=True)
     process_csv(args.data_dir + "ms_marco_train.csv", args.out_dir + "train.jsonl")
     process_csv(args.data_dir + "ms_marco_test.csv", args.out_dir + "test.jsonl")

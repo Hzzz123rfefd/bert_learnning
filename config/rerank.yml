@@ -22,9 +22,9 @@ traininng:
 dataset_type:
   rerank
 dataset:
-  train_data_path: marco_train/1.jsonl                                       # Replace with the training data path that you have processed yourself
-  test_data_path: marco_train/1.jsonl                                           # Replace with the test data path that you have processed yourself
-  valid_data_path: marco_train/1.jsonl                                         # Replace with the valid data path that you have processed yourself
+  train_data_path: data_example/test.jsonl                                       # Replace with the training data path that you have processed yourself
+  test_data_path: data_example/test.jsonl                                           # Replace with the test data path that you have processed yourself
+  valid_data_path: data_example/test.jsonl                                         # Replace with the valid data path that you have processed yourself
   max_padding_length: 512                                                 # Your single data token length should not exceed 512
   train_group_size: 8
 

@@ -24,7 +24,8 @@ class ModelRerank(nn.Module):
         if model_name_or_path != None:
             self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
             self.model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
-    
+            self.model.to(self.device)
+                
     def trainning(
         self,
         train_dataloader:DataLoader = None,
@@ -167,7 +168,7 @@ class ModelRerank(nn.Module):
 
             """ grad clip """
             if clip_max_norm > 0:
-                clip_gradient(optimizer,clip_max_norm)
+                clip_gradient(optimizer, clip_max_norm)
 
             """ modify parameters """
             optimizer.step()
@@ -245,6 +246,7 @@ class ModelRerank(nn.Module):
     def load_pretrained(self, save_model_dir):
         self.tokenizer = AutoTokenizer.from_pretrained(save_model_dir)
         self.model = AutoModelForSequenceClassification.from_pretrained(save_model_dir)
+        self.model.to(self.device)
 
     def save_pretrained(self,  save_model_dir):
         self.model.save_pretrained(save_model_dir) 
